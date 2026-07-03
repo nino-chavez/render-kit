@@ -1,0 +1,7 @@
+node_modules/
+*.png
+_tmp.html
+_render_tmp_*.html
+output/
+.env
+.env.local

@@ -1,0 +1,15 @@
+{
+  "name": "render-kit",
+  "version": "0.1.0",
+  "description": "Unified HTML→PNG asset render harness for CapCut, social, and apparel workflows",
+  "type": "module",
+  "bin": {
+    "render-kit": "./bin/render-kit.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}

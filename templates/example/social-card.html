@@ -1,0 +1,80 @@
+<!-- viewport: 1200x630 -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=JetBrains+Mono:wght@500&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 630px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      display: inline-block;
+      padding: 60px 80px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 900px;
+    }
+
+    .title {
+      font-size: 72px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      font-size: 32px;
+      font-weight: 400;
+      opacity: 0.95;
+      margin-bottom: 30px;
+      letter-spacing: 0.5px;
+    }
+
+    .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      opacity: 0.8;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="title" id="title">Untitled</div>
+    <div class="subtitle" id="subtitle">Default subtitle</div>
+    <div class="meta" id="meta">render-kit example</div>
+  </div>
+
+  <script>
+    // After page load, populate from RENDER_DATA if available
+    if (window.RENDER_DATA) {
+      const { title, subtitle, meta } = window.RENDER_DATA;
+      if (title) document.getElementById('title').textContent = title;
+      if (subtitle) document.getElementById('subtitle').textContent = subtitle;
+      if (meta) document.getElementById('meta').textContent = meta;
+    }
+  </script>
+</body>
+</html>

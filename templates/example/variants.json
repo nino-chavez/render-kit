@@ -1,0 +1,17 @@
+[
+  {
+    "name": "card-variant-a",
+    "title": "Variant A",
+    "subtitle": "First example output"
+  },
+  {
+    "name": "card-variant-b",
+    "title": "Variant B",
+    "subtitle": "Second example output"
+  },
+  {
+    "name": "card-variant-c",
+    "title": "Variant C",
+    "subtitle": "Third example output"
+  }
+]
