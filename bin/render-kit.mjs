@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { chromium } from 'playwright'
-import { fileURLToPath, pathToFileURL } from 'node:url'
+import { pathToFileURL } from 'node:url'
 import { dirname, join, basename } from 'node:path'
 import { readFileSync, writeFileSync, rmSync, mkdirSync, existsSync } from 'node:fs'
 import process from 'node:process'
