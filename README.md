@@ -12,6 +12,21 @@ This tool consolidates the hand-rolled pattern that was rebuilt independently ac
 
 Every script launched a headless browser, loaded an HTML template, injected data, and saved a PNG. render-kit makes the next one a single command, not a new script.
 
+## Two modes
+
+- **Template → PNG** (below): the original harness — one HTML template + data → asset(s).
+- **Walkthrough → many outputs** ([templates/walkthrough/CONTRACT.md](templates/walkthrough/CONTRACT.md)): one captured walkthrough manifest (a still + hotspot + caption per step) → an interactive click-through player **and** a motion video, from the same stills, so they can't drift.
+
+```bash
+# interactive click-through (self-contained folder: index.html + copied stills)
+render-kit walkthrough create-tournament.interactive.json --emit interactive --out-dir out/create-tournament
+
+# motion video over the stills (Ken-Burns push + spotlight + captions; silent)
+render-kit walkthrough create-tournament.interactive.json --emit video --out out/create-tournament.mp4 --canvas 1920x1080
+```
+
+The manifest is produced by an app-specific capture harness (rally-hq's `tests/e2e/record-interactive.spec.ts` is the reference producer). Per-step motion is decided by `lib/hotspot-motion.mjs` — pure and unit-tested (`node lib/hotspot-motion.mjs --selftest`). Capture at 3× DPI when the stills feed the video emitter, so deep zooms stay crisp. Narrated promo video is deliberately a different tool (`forge-signal/templates/demo-reel`), not this lane.
+
 ## Install
 
 ```bash

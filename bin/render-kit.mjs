@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url'
 import { dirname, join, basename } from 'node:path'
 import { readFileSync, writeFileSync, rmSync, mkdirSync, existsSync } from 'node:fs'
 import process from 'node:process'
+import { runWalkthrough } from '../lib/walkthrough-cmd.mjs'
 
 // Parse CLI arguments
 function parseArgs(args) {
@@ -67,7 +68,9 @@ function printHelp() {
 render-kit — HTML to PNG asset renderer
 
 Usage:
-  render-kit <template.html> [options]
+  render-kit <template.html> [options]           render a template to PNG(s)
+  render-kit walkthrough <manifest.json> ...      one capture → interactive player + motion video
+                                                  (run \`render-kit walkthrough --help\`)
 
 Options:
   --data <file.json>        Inject JSON data (exposed as RENDER_DATA global)
@@ -92,6 +95,13 @@ Examples:
 }
 
 async function main() {
+  // Subcommand: `render-kit walkthrough <manifest> --emit ...` routes to the manifest-driven
+  // multi-output path. Anything else is the original template→PNG behavior, unchanged.
+  if (process.argv[2] === 'walkthrough') {
+    await runWalkthrough(process.argv.slice(3))
+    return
+  }
+
   const opts = parseArgs(process.argv.slice(2))
 
   // Validate required arguments

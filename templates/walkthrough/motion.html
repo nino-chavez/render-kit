@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #000; overflow: hidden; }
+  /* Fixed canvas — the renderer screenshots this exact box each seek. Size injected. */
+  #root { position: relative; overflow: hidden; background: #000; }
+  /* The still fills the canvas; transform-origin + scale is the Ken-Burns / zoom camera. */
+  #still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    will-change: transform; }
+  /* Spotlight: a soft dim everywhere except a radius around the target. Opacity is animated. */
+  #spot { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+  /* Caption card — same look as the interactive player, placed near the target. */
+  #cap { position: absolute; max-width: 30%; background: #f5b209; color: #111827;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-weight: 600; line-height: 1.4; border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.45); opacity: 0; will-change: opacity, transform; }
+  /* Click ripple — a single expanding ring for click/select beats. */
+  #ripple { position: absolute; border-radius: 50%; border: 3px solid #f5b209;
+    pointer-events: none; opacity: 0; will-change: transform, opacity;
+    box-shadow: 0 0 0 4px rgba(245,178,9,.25); }
+</style>
+</head>
+<body>
+<div id="root">
+  <img id="still" alt="" />
+  <div id="spot"></div>
+  <div id="ripple"></div>
+  <div id="cap"></div>
+</div>
+<script>
+// STEP is injected by the renderer as window.RENDER_DATA before load:
+//   { frame, caption, hotspot:{x,y,w,h}|null, motion:{scale,originX,originY,ripple,rippleX,rippleY},
+//     width, height, canvasW, canvasH }
+const S = window.RENDER_DATA;
+const root = document.getElementById('root');
+const still = document.getElementById('still');
+const spot = document.getElementById('spot');
+const cap = document.getElementById('cap');
+const ripple = document.getElementById('ripple');
+
+// Canvas is the output box; content coords are the manifest's logical space, scaled to canvas.
+const CW = S.canvasW, CH = S.canvasH;
+root.style.width = CW + 'px';
+root.style.height = CH + 'px';
+const sx = CW / S.width, sy = CH / S.height;      // logical → canvas scale
+const m = S.motion;
+
+still.src = S.frame;
+still.style.transformOrigin = m.originX + '% ' + m.originY + '%';
+
+// Caption: sizic + placed near the target (flip above/below to stay in frame), in canvas px.
+if (S.caption) {
+  cap.textContent = S.caption;
+  cap.style.fontSize = Math.round(CH * 0.026) + 'px';
+  cap.style.padding = Math.round(CH * 0.018) + 'px ' + Math.round(CH * 0.022) + 'px';
+  const hs = S.hotspot;
+  const ax = (hs ? hs.x : S.width / 2) * sx;
+  const ay = (hs ? hs.y : S.height / 2) * sy;
+  const hasRect = hs && hs.w > 0 && hs.h > 0;
+  const below = ay < CH * 0.5;
+  // Measure after layout to flip/clamp.
+  requestAnimationFrame(() => {
+    const ch = cap.offsetHeight, cw = cap.offsetWidth;
+    const off = hasRect ? (hs.h * sy) / 2 + CH * 0.03 : CH * 0.04;
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(v, hi));
+    cap.style.left = clamp(ax - cw * 0.15, 16, CW - cw - 16) + 'px';
+    cap.style.top = clamp(below ? ay + off : ay - off - ch, 16, CH - ch - 16) + 'px';
+  });
+} else {
+  cap.style.display = 'none';
+}
+
+// Spotlight gradient centered on the target (only when there's a target to spotlight).
+if (S.hotspot) {
+  const gx = m.originX, gy = m.originY;
+  const r = S.hotspot.w > 0 ? Math.max(18, (Math.max(S.hotspot.w * sx, S.hotspot.h * sy) / CW) * 100 * 1.8) : 22;
+  spot.style.background =
+    'radial-gradient(circle at ' + gx + '% ' + gy + '%, rgba(0,0,0,0) ' + r + '%, rgba(0,0,0,0.55) ' + (r + 42) + '%)';
+} else {
+  spot.style.display = 'none';
+}
+
+// Ripple placement (click/select only).
+if (m.ripple) {
+  const d = Math.round(CH * 0.14);
+  ripple.style.width = d + 'px';
+  ripple.style.height = d + 'px';
+  ripple.style.left = (m.rippleX / 100 * CW - d / 2) + 'px';
+  ripple.style.top = (m.rippleY / 100 * CH - d / 2) + 'px';
+} else {
+  ripple.style.display = 'none';
+}
+
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const ramp = (p, a, b) => Math.max(0, Math.min(1, (p - a) / (b - a)));
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// The renderer calls this per frame with p in [0,1] across the step's duration.
+window.__seek = function (p) {
+  // Camera: a legible push from full-frame to the target, eased.
+  const scale = lerp(1.0, m.scale, easeOut(Math.min(1, p / 0.85)));
+  still.style.transform = 'scale(' + scale + ')';
+  // Spotlight dims in over the first third, then holds.
+  spot.style.opacity = ramp(p, 0.08, 0.30);
+  // Caption fades + rises in after the establishing beat.
+  const cp = ramp(p, 0.12, 0.32);
+  cap.style.opacity = cp;
+  cap.style.transform = 'translateY(' + lerp(10, 0, cp) + 'px)';
+  // Ripple: one expand-and-fade pulse mid-clip.
+  if (m.ripple) {
+    const rp = ramp(p, 0.28, 0.55);
+    ripple.style.opacity = rp < 1 ? Math.sin(rp * Math.PI) : 0;
+    ripple.style.transform = 'scale(' + lerp(0.5, 1.25, rp) + ')';
+  }
+};
+window.__seek(0);
+// Signal readiness so the renderer waits for fonts + first paint before seeking.
+window.__ready = Promise.all([document.fonts.ready, new Promise((r) => requestAnimationFrame(() => r()))]);
+</script>
+</body>
+</html>
