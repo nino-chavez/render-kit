@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="Render Kit turns one captured walkthrough manifest into interactive and motion outputs without content drift.">
+</p>
+
 # render-kit
 
 Unified HTML→PNG asset render harness for social bugs, video cards, apparel mockups, and any screenshot-based asset pipeline.
