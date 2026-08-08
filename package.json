@@ -10,6 +10,11 @@
     "node": ">=20"
   },
   "dependencies": {
-    "playwright": "^1.48.0"
+    "jszip": "^3.10.1",
+    "playwright": "^1.48.0",
+    "pptxgenjs": "^4.0.1"
+  },
+  "scripts": {
+    "test": "node lib/pose-layout.mjs --selftest && node lib/map-project.mjs --selftest && node lib/hotspot-motion.mjs --selftest && node lib/deck-build.mjs --selftest"
   }
 }

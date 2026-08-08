@@ -258,6 +258,51 @@ render-kit templates/apparel-back.html \
 # magick ./print/back-12in.png -density 300 ./print/back-12in.png
 ```
 
+### A deck someone else can open
+
+Rendered sheets plus companion notes become a `.pptx` and a `.pdf`:
+
+```bash
+node lib/deck-build.mjs build deck.json --out-dir ./deck
+```
+
+The `.pptx` opens in PowerPoint and Keynote and carries the notes in the
+format's own speaker-notes field; Google Slides imports `.pptx`. The `.pdf` is
+one page per sheet with its notes printed underneath — the copy you read on a
+phone. Neither needs a server or this repo on the far end.
+
+A slide is either a rendered sheet or a table of labelled rows:
+
+```json
+{
+  "title": "Danada — operator playbook",
+  "slug": "danada-operator-deck",
+  "aspect": { "w": 2000, "h": 1440 },
+  "slides": [
+    { "id": "map", "image": "../assets/site-map.png", "notes": "Gate opens 6:52." },
+    {
+      "id": "access",
+      "title": "No permit, because nobody is paying",
+      "lede": "Only when money changes hands.",
+      "rows": [{ "k": "Gate opens", "v": "**6:52 a.m.**" }],
+      "notes": "Read this before the morning, not during it."
+    }
+  ]
+}
+```
+
+`aspect` is the canvas the sheets were rendered at, so they land full-bleed;
+a sheet of a different shape is fitted and centred, never stretched. Image
+paths are relative to the spec file. `**bold**` works in `lede`, `rows`, and
+`title`.
+
+The gate refuses to build a deck with a missing sheet, a duplicate id, a slide
+that is both kinds, or a sheet so far off the deck's shape that a quarter of the
+slide would be blank. Notes are required — a slide that genuinely needs none
+says `"notes": null`, so the omission is visible in the spec rather than silent.
+
+Run the checks with `npm test`.
+
 ## Technical details
 
 - **Browser**: Playwright's chromium
