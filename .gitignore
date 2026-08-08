@@ -5,3 +5,4 @@ _render_tmp_*.html
 output/
 .env
 .env.local
+.DS_Store

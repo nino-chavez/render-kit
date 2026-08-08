@@ -1,0 +1,270 @@
+[
+  {
+    "name": "01-family-staggered",
+    "phase": "Phase 1 · full family · 7:00–7:45 · white paddock fences",
+    "title": "Staggered heights",
+    "cue": "\"Everyone find someone to hold onto.\"",
+    "lens": "85mm",
+    "aperture": "f/4",
+    "shutter": "1/250",
+    "distance": "12 ft",
+    "watch": "Five faces on three planes. f/4, not wider — everyone stays sharp.",
+    "figures": [
+      {
+        "role": "Dad",
+        "height": "adult",
+        "x": 21,
+        "depth": 1
+      },
+      {
+        "role": "Mom",
+        "height": "adult",
+        "x": 73,
+        "depth": 1
+      },
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 47,
+        "depth": 0,
+        "note": "a full step forward"
+      },
+      {
+        "role": "Baby",
+        "height": "infant",
+        "carriedBy": "Dad",
+        "carry": "hip",
+        "carryOffset": -22
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "carriedBy": "Mom",
+        "carry": "shoulders",
+        "carryOffset": 0
+      }
+    ]
+  },
+  {
+    "name": "02-family-linked",
+    "phase": "Phase 1 · full family · 7:00–7:45 · white paddock fences",
+    "title": "Linked, one plane",
+    "cue": "\"Hands on the shoulder in front of you.\"",
+    "lens": "85mm",
+    "aperture": "f/4",
+    "shutter": "1/250",
+    "distance": "12 ft",
+    "watch": "Every person touching one other person. No floating hands, no gaps.",
+    "figures": [
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 10,
+        "depth": 0
+      },
+      {
+        "role": "Dad",
+        "height": "adult",
+        "x": 33,
+        "depth": 0
+      },
+      {
+        "role": "Mom",
+        "height": "adult",
+        "x": 67,
+        "depth": 0
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "x": 90,
+        "depth": 0
+      },
+      {
+        "role": "Baby",
+        "height": "infant",
+        "carriedBy": "Mom",
+        "carry": "hip",
+        "carryOffset": 22
+      }
+    ]
+  },
+  {
+    "name": "03-family-walking",
+    "phase": "Phase 1 · full family · 7:00–7:45 · white paddock fences",
+    "title": "Walking in",
+    "cue": "\"Hold hands and walk to me — talk to each other, not to me.\"",
+    "lens": "85mm",
+    "aperture": "f/4",
+    "shutter": "1/500",
+    "distance": "20 ft closing to 10",
+    "watch": "1/500, not 1/250 — they are moving and so are you. Shoot the whole approach.",
+    "figures": [
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 10,
+        "depth": 0
+      },
+      {
+        "role": "Dad",
+        "height": "adult",
+        "x": 33,
+        "depth": 0
+      },
+      {
+        "role": "Mom",
+        "height": "adult",
+        "x": 67,
+        "depth": 0
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "x": 90,
+        "depth": 0
+      },
+      {
+        "role": "Baby",
+        "height": "infant",
+        "carriedBy": "Dad",
+        "carry": "hip",
+        "carryOffset": -22
+      }
+    ]
+  },
+  {
+    "name": "04-parent-and-three",
+    "phase": "Phase 2 · breakdowns · 7:45–8:30 · regional trails",
+    "title": "One parent, three kids",
+    "cue": "\"Squeeze in — closer than feels normal.\"",
+    "lens": "85mm",
+    "aperture": "f/2.8",
+    "shutter": "1/250",
+    "distance": "9 ft",
+    "watch": "Shoot it twice. Pull Dad out, then swap and match the frame with Mom.",
+    "figures": [
+      {
+        "role": "Parent",
+        "height": "adult",
+        "x": 50,
+        "depth": 0
+      },
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 10,
+        "depth": 0
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "x": 90,
+        "depth": 0
+      },
+      {
+        "role": "Baby",
+        "height": "infant",
+        "carriedBy": "Parent",
+        "carry": "hip",
+        "carryOffset": -22
+      }
+    ]
+  },
+  {
+    "name": "05-sandwich",
+    "phase": "Phase 2 · breakdowns · 7:45–8:30 · regional trails",
+    "title": "The sandwich",
+    "cue": "\"You two hold still — girls, GO.\"",
+    "lens": "85mm",
+    "aperture": "f/2.8",
+    "shutter": "1/500",
+    "distance": "10 ft",
+    "watch": "The real frame is the second after impact. Keep shooting past the collision.",
+    "figures": [
+      {
+        "role": "Dad",
+        "height": "adult",
+        "x": 38,
+        "depth": 1
+      },
+      {
+        "role": "Mom",
+        "height": "adult",
+        "x": 62,
+        "depth": 1
+      },
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 10,
+        "depth": 0,
+        "note": "runs in"
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "x": 90,
+        "depth": 0,
+        "note": "runs in"
+      }
+    ]
+  },
+  {
+    "name": "06-siblings-low",
+    "phase": "Phase 2 · breakdowns · 8:30–9:15 · Danada House grounds",
+    "title": "Sisters and the baby",
+    "cue": "Nothing. Say nothing and back up.",
+    "lens": "135mm",
+    "aperture": "f/2.8",
+    "shutter": "1/250",
+    "distance": "18 ft",
+    "watch": "Blanket or low log, baby supported. 135mm from far back — distance is what gets you the real face.",
+    "figures": [
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 24,
+        "depth": 0
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "x": 76,
+        "depth": 0
+      },
+      {
+        "role": "Baby",
+        "height": "infant",
+        "x": 50,
+        "depth": 0,
+        "note": "seated, supported"
+      }
+    ]
+  },
+  {
+    "name": "07-couple",
+    "phase": "Phase 2 · wrap-up · 8:30–9:15 · Danada House grounds",
+    "title": "Just the two of them",
+    "cue": "\"Kids are having a snack. Two minutes, just you.\"",
+    "lens": "85mm",
+    "aperture": "f/2",
+    "shutter": "1/250",
+    "distance": "8 ft",
+    "watch": "Kids parked with a snack and an adult eye on them before you start.",
+    "figures": [
+      {
+        "role": "Dad",
+        "height": "adult",
+        "x": 38,
+        "depth": 0
+      },
+      {
+        "role": "Mom",
+        "height": "adult",
+        "x": 62,
+        "depth": 0
+      }
+    ]
+  }
+]
