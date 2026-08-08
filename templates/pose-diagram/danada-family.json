@@ -13,35 +13,45 @@
       {
         "role": "Dad",
         "height": "adult",
-        "x": 21,
+        "x": 40,
         "depth": 1
       },
       {
         "role": "Mom",
         "height": "adult",
-        "x": 73,
+        "x": 58,
         "depth": 1
       },
       {
         "role": "Big sis",
         "height": "child-tall",
-        "x": 47,
+        "x": 49,
         "depth": 0,
-        "note": "a full step forward"
+        "note": "a full step forward",
+        "contact": [
+          {
+            "to": "Dad",
+            "at": "waist"
+          },
+          {
+            "to": "Mom",
+            "at": "waist"
+          }
+        ]
       },
       {
         "role": "Baby",
         "height": "infant",
         "carriedBy": "Dad",
         "carry": "hip",
-        "carryOffset": -22
+        "carrySide": "left"
       },
       {
         "role": "Little sis",
         "height": "child-small",
         "carriedBy": "Mom",
         "carry": "shoulders",
-        "carryOffset": 0
+        "carrySide": "right"
       }
     ]
   },
@@ -59,33 +69,51 @@
       {
         "role": "Big sis",
         "height": "child-tall",
-        "x": 10,
-        "depth": 0
+        "x": 38,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Dad",
+            "at": "waist"
+          }
+        ]
       },
       {
         "role": "Dad",
         "height": "adult",
-        "x": 33,
-        "depth": 0
+        "x": 46,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Mom",
+            "at": "shoulder"
+          }
+        ]
       },
       {
         "role": "Mom",
         "height": "adult",
-        "x": 67,
+        "x": 55,
         "depth": 0
       },
       {
         "role": "Little sis",
         "height": "child-small",
-        "x": 90,
-        "depth": 0
+        "x": 63,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Baby",
+            "at": "hand"
+          }
+        ]
       },
       {
         "role": "Baby",
         "height": "infant",
         "carriedBy": "Mom",
         "carry": "hip",
-        "carryOffset": 22
+        "carrySide": "right"
       }
     ]
   },
@@ -103,33 +131,51 @@
       {
         "role": "Big sis",
         "height": "child-tall",
-        "x": 10,
-        "depth": 0
+        "x": 33,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Dad",
+            "at": "hand"
+          }
+        ]
       },
       {
         "role": "Dad",
         "height": "adult",
-        "x": 33,
-        "depth": 0
+        "x": 46,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Mom",
+            "at": "hand"
+          }
+        ]
       },
       {
         "role": "Mom",
         "height": "adult",
-        "x": 67,
+        "x": 55,
         "depth": 0
       },
       {
         "role": "Little sis",
         "height": "child-small",
-        "x": 90,
-        "depth": 0
+        "x": 63,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Mom",
+            "at": "hand"
+          }
+        ]
       },
       {
         "role": "Baby",
         "height": "infant",
         "carriedBy": "Dad",
         "carry": "hip",
-        "carryOffset": -22
+        "carrySide": "left"
       }
     ]
   },
@@ -153,21 +199,33 @@
       {
         "role": "Big sis",
         "height": "child-tall",
-        "x": 10,
-        "depth": 0
+        "x": 41,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Parent",
+            "at": "waist"
+          }
+        ]
       },
       {
         "role": "Little sis",
         "height": "child-small",
-        "x": 90,
-        "depth": 0
+        "x": 57,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Parent",
+            "at": "waist"
+          }
+        ]
       },
       {
         "role": "Baby",
         "height": "infant",
         "carriedBy": "Parent",
         "carry": "hip",
-        "carryOffset": -22
+        "carrySide": "left"
       }
     ]
   },
@@ -185,26 +243,26 @@
       {
         "role": "Dad",
         "height": "adult",
-        "x": 38,
+        "x": 45,
         "depth": 1
       },
       {
         "role": "Mom",
         "height": "adult",
-        "x": 62,
+        "x": 55,
         "depth": 1
       },
       {
         "role": "Big sis",
         "height": "child-tall",
-        "x": 10,
+        "x": 30,
         "depth": 0,
         "note": "runs in"
       },
       {
         "role": "Little sis",
         "height": "child-small",
-        "x": 90,
+        "x": 70,
         "depth": 0,
         "note": "runs in"
       }
@@ -224,13 +282,13 @@
       {
         "role": "Big sis",
         "height": "child-tall",
-        "x": 24,
+        "x": 42,
         "depth": 0
       },
       {
         "role": "Little sis",
         "height": "child-small",
-        "x": 76,
+        "x": 58,
         "depth": 0
       },
       {
@@ -256,13 +314,19 @@
       {
         "role": "Dad",
         "height": "adult",
-        "x": 38,
-        "depth": 0
+        "x": 46,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Mom",
+            "at": "waist"
+          }
+        ]
       },
       {
         "role": "Mom",
         "height": "adult",
-        "x": 62,
+        "x": 54,
         "depth": 0
       }
     ]

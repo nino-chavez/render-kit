@@ -77,8 +77,15 @@ const el = (name, attrs) => {
 };
 const FONT = '-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif';
 
+// Every name carries a paper halo. A carried child's name has to sit beside the
+// adult holding them, and in a line-up that lands on somebody's torso whichever
+// side it picks — so legibility cannot depend on what is behind the text.
 function label(text, x, y, size, weight, fill = '#16161a', anchor = 'middle') {
-  const t = el('text', { x, y, 'text-anchor': anchor, 'font-size': size, 'font-weight': weight, fill, 'font-family': FONT });
+  const t = el('text', {
+    x, y, 'text-anchor': anchor, 'font-size': size, 'font-weight': weight, fill,
+    'font-family': FONT, stroke: PAPER, 'stroke-width': size * 0.28,
+    'stroke-linejoin': 'round', 'paint-order': 'stroke fill',
+  });
   t.textContent = text;
   return t;
 }
@@ -91,22 +98,84 @@ for (const d of depths) {
   svg.appendChild(line);
 }
 
-// Figures in layout order, so carried riders land in front of their host.
+// Contact shadows first, under everything.
+for (const fig of figures) {
+  if (!fig.shadow) continue;
+  svg.appendChild(el('ellipse', { ...fig.shadow, fill: '#16161a', opacity: 0.13 }));
+}
+
+const PAPER = '#f7f6f3';
+
+const limb = (x1, y1, x2, y2, stroke, width) => el('line', {
+  x1, y1, x2, y2, stroke, 'stroke-width': width, 'stroke-linecap': 'round',
+});
+
+/**
+ * Draw a set of limbs with a paper-coloured casing under them.
+ *
+ * A limb in the body's own colour, lying against that body, is invisible — the
+ * arms were being drawn correctly and simply could not be seen. The casing cuts
+ * a channel of background around each limb, which is how pictogram systems
+ * separate a arm from a torso without outlining everything.
+ *
+ * Every casing is laid down before any limb, or the second limb's casing erases
+ * the first limb.
+ */
+function drawLimbs(segments) {
+  for (const [x1, y1, x2, y2, , width] of segments) {
+    svg.appendChild(limb(x1, y1, x2, y2, PAPER, width * 2.15));
+  }
+  for (const [x1, y1, x2, y2, stroke, width] of segments) {
+    svg.appendChild(limb(x1, y1, x2, y2, stroke, width));
+  }
+}
+
+// Every torso first, then every limb.
+//
+// Not figure by figure: a limb's casing is paper-coloured, so a neighbour drawn
+// afterwards paints over it, and a neighbour drawn before gets a bite taken out
+// of it. In a group standing close enough to touch — which is every pose here —
+// that showed up as a hand stopping short of the waist it was supposed to be
+// holding. Torsos, then casings, then limbs keeps the separation uniform and
+// puts every hand on top of the person it lands on.
 for (const fig of figures) {
   const { box } = fig;
-  const tone = fig.tone;
+  // A carried child overlaps the adult holding them, so it keeps a paper outline
+  // to stay a separate body. Riders sort last, so nothing paints over it.
+  const edge = fig.carried
+    ? { stroke: PAPER, 'stroke-width': Math.max(3, box.limb * 0.7) }
+    : {};
   const g = el('g', { transform: `translate(${fig.x}, 0)` });
   g.appendChild(el('path', {
     d: `M ${-box.halfShoulder} ${box.shoulderY} L ${box.halfShoulder} ${box.shoulderY} L ${box.halfHip} ${box.feetY} L ${-box.halfHip} ${box.feetY} Z`,
-    fill: tone,
-    stroke: fig.carried ? '#f7f6f3' : 'none',
-    'stroke-width': fig.carried ? 4 : 0,
+    fill: fig.tone, ...edge,
   }));
   g.appendChild(el('circle', {
-    cx: 0, cy: box.shoulderY - box.headR * 1.35, r: box.headR,
-    fill: tone, stroke: fig.carried ? '#f7f6f3' : 'none', 'stroke-width': fig.carried ? 4 : 0,
+    cx: 0, cy: box.shoulderY - box.headR * 1.35, r: box.headR, fill: fig.tone, ...edge,
   }));
   svg.appendChild(g);
+}
+
+const segments = [];
+for (const fig of figures) {
+  for (const a of fig.arms || []) {
+    segments.push([a.from.x, a.from.y, a.to.x, a.to.y, fig.limbTone, a.width]);
+  }
+  if (!fig.rig) continue;
+  const host = figures.find((f) => f.role === fig.carriedBy);
+  for (const [a, b, c, d] of fig.rig.hostArms) {
+    segments.push([a, b, c, d, host ? host.limbTone : fig.limbTone, fig.rig.width * 1.15]);
+  }
+  for (const [a, b, c, d] of fig.rig.legs) segments.push([a, b, c, d, fig.limbTone, fig.rig.width]);
+}
+drawLimbs(segments);
+
+// A dot where the hold actually lands, so the grip is legible at thumbnail size.
+for (const fig of figures) {
+  for (const arm of fig.arms || []) {
+    if (arm.at === 'rest') continue;
+    svg.appendChild(el('circle', { cx: arm.to.x, cy: arm.to.y, r: arm.width * 0.62, fill: fig.limbTone }));
+  }
 }
 
 // Labels last, so no figure covers a name.

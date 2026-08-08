@@ -258,6 +258,39 @@ render-kit templates/apparel-back.html \
 # magick ./print/back-12in.png -density 300 ./print/back-12in.png
 ```
 
+### Pose blocking sheets
+
+```bash
+node lib/pose-layout.mjs build poses.json variants.json
+render-kit templates/pose-diagram/blocking.html --out-dir ./sheets --variants variants.json --scale 2
+```
+
+A figure declares where it stands and who it is touching. Nothing about contact
+is inferred from position — two people standing next to each other are not
+necessarily holding on to each other, and guessing draws arms the photographer
+never asked for.
+
+```json
+{
+  "role": "Big sis", "height": "child-tall", "x": 49, "depth": 0,
+  "contact": [{ "to": "Dad", "at": "waist" }, "Mom"]
+}
+```
+
+`at` is `shoulder` (the default, so a bare `"Mom"` means a hand on her
+shoulder), `waist`, or `hand`. A carried child says `carriedBy` plus
+`carry: "hip" | "shoulders"`, and a hip carry says `carrySide: "left" | "right"`
+— the distance from the adult is derived from both bodies, so the child always
+clears the silhouette instead of vanishing behind it at some scales.
+
+`x` is relative blocking, not final position: real family spacing is tight, so
+the laid-out group is scaled up to fill the sheet with the spacing intact.
+
+The gate refuses a contact nobody could reach, a contact with someone who is not
+in the pose, two figures drawn on top of each other, a child taller than the
+adult carrying them, a duplicate role, and any geometry that lands off the
+sheet. `node lib/pose-layout.mjs --selftest` covers it.
+
 ### A deck someone else can open
 
 Rendered sheets plus companion notes become a `.pptx` and a `.pdf`:
