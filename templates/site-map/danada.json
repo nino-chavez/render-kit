@@ -1,31 +1,31 @@
 {
   "name": "danada-morning",
   "title": "Danada — Saturday morning",
-  "subtitle": "Park once. Three stops on foot, north along the trail.",
+  "subtitle": "Park once. Three stops on foot, chasing shade as the sun climbs.",
   "places": [
     {
       "label": "Park here",
       "kind": "parking",
       "osm": "way/321063232",
-      "note": "Arrive 6:55 — gate opens 6:52"
+      "note": "Arrive 9:20 — park by the barns"
     },
     {
-      "label": "1 · 7:00",
+      "label": "1 · 9:30",
       "kind": "stop",
       "osm": "way/707965571",
       "note": "Equestrian Center — white paddock fences"
     },
     {
-      "label": "2 · 7:45",
+      "label": "2 · 10:15",
       "kind": "stop",
       "osm": "way/172568407",
-      "note": "Regional trail — prairie and woodland"
+      "note": "Regional trail — woodland shade, not open prairie"
     },
     {
-      "label": "3 · 8:30",
+      "label": "3 · 11:00",
       "kind": "stop",
       "osm": "way/491453217",
-      "note": "Danada House grounds — outdoors only"
+      "note": "Danada House gardens — full shade, outdoors only"
     }
   ],
   "route": [
