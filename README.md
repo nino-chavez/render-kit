@@ -6,6 +6,12 @@
 
 Unified HTML→PNG asset render harness for social bugs, video cards, apparel mockups, and any screenshot-based asset pipeline.
 
+## Agents: read CLAUDE.md first
+
+Render work in a governed repo is **dispatched to a model tier, not run inline**. [CLAUDE.md](CLAUDE.md)
+carries the one-command check for whether the current repo routes, what to do in each case, and the
+one-file recipe for adopting it. Read it before your first render.
+
 ## What it replaces
 
 This tool consolidates the hand-rolled pattern that was rebuilt independently across:
