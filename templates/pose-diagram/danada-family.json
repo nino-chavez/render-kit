@@ -1,0 +1,334 @@
+[
+  {
+    "name": "01-family-staggered",
+    "phase": "Phase 1 · full family · 9:30–10:15 · white paddock fences",
+    "title": "Staggered heights",
+    "cue": "\"Everyone find someone to hold onto.\"",
+    "lens": "85mm",
+    "aperture": "f/4",
+    "shutter": "1/1000",
+    "distance": "12 ft",
+    "watch": "Sun behind them, faces in open shade. f/4, not wider — five faces on three planes.",
+    "figures": [
+      {
+        "role": "Dad",
+        "height": "adult",
+        "x": 40,
+        "depth": 1
+      },
+      {
+        "role": "Mom",
+        "height": "adult",
+        "x": 58,
+        "depth": 1
+      },
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 49,
+        "depth": 0,
+        "note": "a full step forward",
+        "contact": [
+          {
+            "to": "Dad",
+            "at": "waist"
+          },
+          {
+            "to": "Mom",
+            "at": "waist"
+          }
+        ]
+      },
+      {
+        "role": "Baby",
+        "height": "infant",
+        "carriedBy": "Dad",
+        "carry": "hip",
+        "carrySide": "left"
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "carriedBy": "Mom",
+        "carry": "shoulders",
+        "carrySide": "right"
+      }
+    ]
+  },
+  {
+    "name": "02-family-linked",
+    "phase": "Phase 1 · full family · 9:30–10:15 · white paddock fences",
+    "title": "Linked, one plane",
+    "cue": "\"Hands on the shoulder in front of you.\"",
+    "lens": "85mm",
+    "aperture": "f/4",
+    "shutter": "1/1000",
+    "distance": "12 ft",
+    "watch": "Every person touching one other person. Watch the white fence — it will blow before their faces do.",
+    "figures": [
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 38,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Dad",
+            "at": "waist"
+          }
+        ]
+      },
+      {
+        "role": "Dad",
+        "height": "adult",
+        "x": 46,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Mom",
+            "at": "shoulder"
+          }
+        ]
+      },
+      {
+        "role": "Mom",
+        "height": "adult",
+        "x": 55,
+        "depth": 0
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "x": 63,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Baby",
+            "at": "hand"
+          }
+        ]
+      },
+      {
+        "role": "Baby",
+        "height": "infant",
+        "carriedBy": "Mom",
+        "carry": "hip",
+        "carrySide": "right"
+      }
+    ]
+  },
+  {
+    "name": "03-family-walking",
+    "phase": "Phase 1 · full family · 9:30–10:15 · white paddock fences",
+    "title": "Walking in",
+    "cue": "\"Hold hands and walk to me — talk to each other, not to me.\"",
+    "lens": "85mm",
+    "aperture": "f/4",
+    "shutter": "1/1250",
+    "distance": "20 ft closing to 10",
+    "watch": "1/1250 — they are moving and so are you. Walk them out of the open sun, not into it.",
+    "figures": [
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 33,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Dad",
+            "at": "hand"
+          }
+        ]
+      },
+      {
+        "role": "Dad",
+        "height": "adult",
+        "x": 46,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Mom",
+            "at": "hand"
+          }
+        ]
+      },
+      {
+        "role": "Mom",
+        "height": "adult",
+        "x": 55,
+        "depth": 0
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "x": 63,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Mom",
+            "at": "hand"
+          }
+        ]
+      },
+      {
+        "role": "Baby",
+        "height": "infant",
+        "carriedBy": "Dad",
+        "carry": "hip",
+        "carrySide": "left"
+      }
+    ]
+  },
+  {
+    "name": "04-parent-and-three",
+    "phase": "Phase 2 · breakdowns · 10:15–11:00 · woodland shade",
+    "title": "One parent, three kids",
+    "cue": "\"Squeeze in — closer than feels normal.\"",
+    "lens": "85mm",
+    "aperture": "f/2.8",
+    "shutter": "1/1000",
+    "distance": "9 ft",
+    "watch": "Shoot it twice. Pull Dad out, then swap and match the frame with Mom.",
+    "figures": [
+      {
+        "role": "Parent",
+        "height": "adult",
+        "x": 50,
+        "depth": 0
+      },
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 41,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Parent",
+            "at": "waist"
+          }
+        ]
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "x": 57,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Parent",
+            "at": "waist"
+          }
+        ]
+      },
+      {
+        "role": "Baby",
+        "height": "infant",
+        "carriedBy": "Parent",
+        "carry": "hip",
+        "carrySide": "left"
+      }
+    ]
+  },
+  {
+    "name": "05-sandwich",
+    "phase": "Phase 2 · breakdowns · 10:15–11:00 · woodland shade",
+    "title": "The sandwich",
+    "cue": "\"You two hold still — girls, GO.\"",
+    "lens": "85mm",
+    "aperture": "f/2.8",
+    "shutter": "1/1250",
+    "distance": "10 ft",
+    "watch": "The real frame is the second after impact. Keep shooting past the collision.",
+    "figures": [
+      {
+        "role": "Dad",
+        "height": "adult",
+        "x": 45,
+        "depth": 1
+      },
+      {
+        "role": "Mom",
+        "height": "adult",
+        "x": 55,
+        "depth": 1
+      },
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 30,
+        "depth": 0,
+        "note": "runs in"
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "x": 70,
+        "depth": 0,
+        "note": "runs in"
+      }
+    ]
+  },
+  {
+    "name": "06-siblings-low",
+    "phase": "Phase 3 · wrap-up · 11:00–11:45 · Danada House gardens",
+    "title": "Sisters and the baby",
+    "cue": "Nothing. Say nothing and back up.",
+    "lens": "135mm",
+    "aperture": "f/2.8",
+    "shutter": "1/1000",
+    "distance": "18 ft",
+    "watch": "Blanket or low log in shade, baby supported. 135mm from far back — distance gets you the real face.",
+    "figures": [
+      {
+        "role": "Big sis",
+        "height": "child-tall",
+        "x": 42,
+        "depth": 0
+      },
+      {
+        "role": "Little sis",
+        "height": "child-small",
+        "x": 58,
+        "depth": 0
+      },
+      {
+        "role": "Baby",
+        "height": "infant",
+        "x": 50,
+        "depth": 0,
+        "note": "seated, supported"
+      }
+    ]
+  },
+  {
+    "name": "07-couple",
+    "phase": "Phase 3 · wrap-up · 11:00–11:45 · Danada House gardens",
+    "title": "Just the two of them",
+    "cue": "\"Kids are having a snack. Two minutes, just you.\"",
+    "lens": "85mm",
+    "aperture": "f/2",
+    "shutter": "1/2000",
+    "distance": "8 ft",
+    "watch": "Kids parked with a snack and an adult eye on them before you start.",
+    "figures": [
+      {
+        "role": "Dad",
+        "height": "adult",
+        "x": 46,
+        "depth": 0,
+        "contact": [
+          {
+            "to": "Mom",
+            "at": "waist"
+          }
+        ]
+      },
+      {
+        "role": "Mom",
+        "height": "adult",
+        "x": 54,
+        "depth": 0
+      }
+    ]
+  }
+]

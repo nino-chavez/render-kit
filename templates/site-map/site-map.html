@@ -1,0 +1,156 @@
+<!-- viewport: 1000x760 -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    /* System font stack only, so a render never depends on a network fetch. */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 1000px;
+      height: 760px;
+      overflow: hidden;
+      background: #f7f6f3;
+      color: #16161a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .sheet { width: 1000px; height: 760px; padding: 26px 32px 20px; display: flex; flex-direction: column; }
+
+    .title { font-size: 42px; font-weight: 700; letter-spacing: -.02em; }
+    .subtitle { font-size: 21px; margin-top: 5px; color: #3d3a33; }
+
+    .map { flex: 1; min-height: 0; margin-top: 8px; }
+    svg { width: 100%; height: 100%; display: block; }
+
+    .legs { display: flex; gap: 9px; align-items: stretch; margin-top: 4px; }
+    .leg {
+      background: #16161a; color: #f7f6f3; border-radius: 8px; padding: 8px 14px;
+      font-size: 22px; font-weight: 700; display: flex; align-items: center; white-space: nowrap;
+    }
+    .leg small { font-size: 13px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; opacity: .6; margin-right: 8px; }
+    .total { background: none; color: #16161a; border: 2px solid #16161a; }
+
+    .credit { margin-top: 8px; font-size: 13px; color: #8a8578; }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="title" id="title"></div>
+    <div class="subtitle" id="subtitle"></div>
+    <div class="map"><svg id="map" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <div class="legs" id="legs"></div>
+    <div class="credit" id="credit"></div>
+  </div>
+
+<script>
+// Pure renderer. Every coordinate here was projected by lib/map-project.mjs from
+// a fetched OpenStreetMap extract — nothing on this sheet was positioned by hand.
+const data = window.RENDER_DATA || {};
+const map = data.map;
+if (!map) throw new Error('RENDER_DATA.map is missing — run: node lib/map-project.mjs build <spec> <extract> <variants>');
+
+const svg = document.getElementById('map');
+svg.setAttribute('viewBox', `0 0 ${map.stage.width} ${map.stage.height}`);
+const ns = 'http://www.w3.org/2000/svg';
+const el = (name, attrs) => {
+  const node = document.createElementNS(ns, name);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+  return node;
+};
+const FONT = '-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif';
+const path = (points, close) => points.map((p, i) => `${i ? 'L' : 'M'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ') + (close ? ' Z' : '');
+
+function text(content, x, y, size, weight, fill, anchor = 'middle', halo = true) {
+  const t = el('text', { x, y, 'text-anchor': anchor, 'font-size': size, 'font-weight': weight, fill, 'font-family': FONT });
+  if (halo) {
+    // Standard cartographic fix: a knocked-out casing behind the glyphs, so a
+    // name stays readable wherever the geometry puts it.
+    t.setAttribute('paint-order', 'stroke');
+    t.setAttribute('stroke', '#f7f6f3');
+    t.setAttribute('stroke-width', size / 4);
+    t.setAttribute('stroke-linejoin', 'round');
+  }
+  t.textContent = content;
+  return t;
+}
+
+// Ground: parking aprons, then buildings, then the trails you are not walking.
+for (const outline of map.context.parking) {
+  svg.appendChild(el('path', { d: path(outline, true), fill: '#e6e2d6', stroke: '#d3cec0', 'stroke-width': 1 }));
+}
+for (const outline of map.context.buildings) {
+  svg.appendChild(el('path', { d: path(outline, true), fill: '#dcd6c8', stroke: '#c9c2b0', 'stroke-width': 1 }));
+}
+for (const outline of map.context.trails) {
+  svg.appendChild(el('path', { d: path(outline), fill: 'none', stroke: '#cfcabb', 'stroke-width': 2, 'stroke-dasharray': '4 5' }));
+}
+
+// The walk: a wide pale casing under a solid line, so it reads over anything.
+svg.appendChild(el('path', { d: path(map.route.points), fill: 'none', stroke: '#f7f6f3', 'stroke-width': 11, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+svg.appendChild(el('path', { d: path(map.route.points), fill: 'none', stroke: '#2f5d62', 'stroke-width': 5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+
+// Stops. Parking gets a square, shooting locations get numbered discs.
+map.places.forEach((place, index) => {
+  const parking = place.kind === 'parking';
+  if (place.outline) {
+    svg.appendChild(el('path', {
+      d: path(place.outline, true),
+      fill: parking ? '#d99b00' : '#a9a294', 'fill-opacity': 0.16,
+      stroke: parking ? '#c08a00' : '#a9a294', 'stroke-width': 2,
+    }));
+  }
+
+  const { x, y } = place.at;
+  if (parking) {
+    svg.appendChild(el('rect', { x: x - 15, y: y - 15, width: 30, height: 30, rx: 6, fill: '#d99b00' }));
+    svg.appendChild(text('P', x, y + 8, 22, 800, '#16161a', 'middle', false));
+  } else {
+    svg.appendChild(el('circle', { cx: x, cy: y, r: 16, fill: '#2f5d62', stroke: '#f7f6f3', 'stroke-width': 3 }));
+    svg.appendChild(text(String(index), x, y + 7, 20, 800, '#f7f6f3', 'middle', false));
+  }
+
+  // Labels alternate above and below so four stops in a column stay readable.
+  const above = index % 2 === 0;
+  const labelY = above ? y - 26 : y + 40;
+  svg.appendChild(text(place.label, x, labelY, 20, 700, '#16161a'));
+  if (place.note) svg.appendChild(text(place.note, x, labelY + (above ? -19 : 19), 15, 500, '#6b675d'));
+});
+
+// North arrow.
+const nx = map.stage.width - 44;
+const ny = 46;
+svg.appendChild(el('path', { d: `M ${nx} ${ny - 22} L ${nx + 9} ${ny + 8} L ${nx} ${ny + 1} L ${nx - 9} ${ny + 8} Z`, fill: '#16161a' }));
+svg.appendChild(text('N', nx, ny + 26, 16, 700, '#16161a'));
+
+// Scale bar, drawn from the projection's own metres-per-pixel.
+const sx = 34;
+const sy = map.stage.height - 24;
+svg.appendChild(el('line', { x1: sx, y1: sy, x2: sx + map.scale.pixels, y2: sy, stroke: '#16161a', 'stroke-width': 3 }));
+for (const tick of [0, map.scale.pixels]) {
+  svg.appendChild(el('line', { x1: sx + tick, y1: sy - 6, x2: sx + tick, y2: sy + 6, stroke: '#16161a', 'stroke-width': 3 }));
+}
+svg.appendChild(text(`${map.scale.metres} m`, sx + map.scale.pixels / 2, sy - 12, 16, 700, '#16161a'));
+
+document.getElementById('title').textContent = map.title;
+document.getElementById('subtitle').textContent = map.subtitle;
+
+const legs = document.getElementById('legs');
+for (const leg of map.route.legs) {
+  const chip = document.createElement('div');
+  chip.className = 'leg';
+  chip.innerHTML = `<small>${leg.from} → ${leg.to}</small>${leg.metres} m`;
+  legs.appendChild(chip);
+}
+const total = document.createElement('div');
+total.className = 'leg total';
+total.innerHTML = `<small>on foot</small>${map.route.metres} m`;
+legs.appendChild(total);
+
+// ODbL requires attribution wherever the data appears, rendered output included.
+document.getElementById('credit').textContent = map.attribution;
+</script>
+</body>
+</html>

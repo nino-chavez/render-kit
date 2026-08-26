@@ -6,6 +6,12 @@
 
 Unified HTML→PNG asset render harness for social bugs, video cards, apparel mockups, and any screenshot-based asset pipeline.
 
+## Agents: read CLAUDE.md first
+
+Render work in a governed repo is **dispatched to a model tier, not run inline**. [CLAUDE.md](CLAUDE.md)
+carries the one-command check for whether the current repo routes, what to do in each case, and the
+one-file recipe for adopting it. Read it before your first render.
+
 ## What it replaces
 
 This tool consolidates the hand-rolled pattern that was rebuilt independently across:
@@ -257,6 +263,84 @@ render-kit templates/apparel-back.html \
 # Then stamp DPI if needed:
 # magick ./print/back-12in.png -density 300 ./print/back-12in.png
 ```
+
+### Pose blocking sheets
+
+```bash
+node lib/pose-layout.mjs build poses.json variants.json
+render-kit templates/pose-diagram/blocking.html --out-dir ./sheets --variants variants.json --scale 2
+```
+
+A figure declares where it stands and who it is touching. Nothing about contact
+is inferred from position — two people standing next to each other are not
+necessarily holding on to each other, and guessing draws arms the photographer
+never asked for.
+
+```json
+{
+  "role": "Big sis", "height": "child-tall", "x": 49, "depth": 0,
+  "contact": [{ "to": "Dad", "at": "waist" }, "Mom"]
+}
+```
+
+`at` is `shoulder` (the default, so a bare `"Mom"` means a hand on her
+shoulder), `waist`, or `hand`. A carried child says `carriedBy` plus
+`carry: "hip" | "shoulders"`, and a hip carry says `carrySide: "left" | "right"`
+— the distance from the adult is derived from both bodies, so the child always
+clears the silhouette instead of vanishing behind it at some scales.
+
+`x` is relative blocking, not final position: real family spacing is tight, so
+the laid-out group is scaled up to fill the sheet with the spacing intact.
+
+The gate refuses a contact nobody could reach, a contact with someone who is not
+in the pose, two figures drawn on top of each other, a child taller than the
+adult carrying them, a duplicate role, and any geometry that lands off the
+sheet. `node lib/pose-layout.mjs --selftest` covers it.
+
+### A deck someone else can open
+
+Rendered sheets plus companion notes become a `.pptx` and a `.pdf`:
+
+```bash
+node lib/deck-build.mjs build deck.json --out-dir ./deck
+```
+
+The `.pptx` opens in PowerPoint and Keynote and carries the notes in the
+format's own speaker-notes field; Google Slides imports `.pptx`. The `.pdf` is
+one page per sheet with its notes printed underneath — the copy you read on a
+phone. Neither needs a server or this repo on the far end.
+
+A slide is either a rendered sheet or a table of labelled rows:
+
+```json
+{
+  "title": "Danada — operator playbook",
+  "slug": "danada-operator-deck",
+  "aspect": { "w": 2000, "h": 1440 },
+  "slides": [
+    { "id": "map", "image": "../assets/site-map.png", "notes": "Gate opens 6:52." },
+    {
+      "id": "access",
+      "title": "No permit, because nobody is paying",
+      "lede": "Only when money changes hands.",
+      "rows": [{ "k": "Gate opens", "v": "**6:52 a.m.**" }],
+      "notes": "Read this before the morning, not during it."
+    }
+  ]
+}
+```
+
+`aspect` is the canvas the sheets were rendered at, so they land full-bleed;
+a sheet of a different shape is fitted and centred, never stretched. Image
+paths are relative to the spec file. `**bold**` works in `lede`, `rows`, and
+`title`.
+
+The gate refuses to build a deck with a missing sheet, a duplicate id, a slide
+that is both kinds, or a sheet so far off the deck's shape that a quarter of the
+slide would be blank. Notes are required — a slide that genuinely needs none
+says `"notes": null`, so the omission is visible in the spec rather than silent.
+
+Run the checks with `npm test`.
 
 ## Technical details
 

@@ -2,7 +2,7 @@
 
 import { chromium } from 'playwright'
 import { pathToFileURL } from 'node:url'
-import { dirname, join, basename } from 'node:path'
+import { dirname, join, basename, resolve } from 'node:path'
 import { readFileSync, writeFileSync, rmSync, mkdirSync, existsSync } from 'node:fs'
 import process from 'node:process'
 import { runWalkthrough } from '../lib/walkthrough-cmd.mjs'
@@ -208,16 +208,27 @@ async function main() {
       html = html.replace('</head>', `${dataScript}</head>`)
     }
 
-    // Create temp file
-    const tmpFile = join(dirname(job.outPath), `_render_tmp_${Date.now()}.html`)
+    // Create temp file NEXT TO THE TEMPLATE, not next to the output. Relative
+    // src/href in the template resolve against the document's own directory, so
+    // writing it beside the output silently breaks every sibling asset whenever
+    // --out or --out-dir points elsewhere.
+    const tmpFile = join(dirname(resolve(opts.template)), `_render_tmp_${Date.now()}.html`)
     writeFileSync(tmpFile, html)
 
-    try {
-      const page = await browser.newPage({
-        viewport: { width: viewportWidth, height: viewportHeight },
-        deviceScaleFactor: opts.scale,
-      })
+    const page = await browser.newPage({
+      viewport: { width: viewportWidth, height: viewportHeight },
+      deviceScaleFactor: opts.scale,
+    })
 
+    // A missing image or font renders as a silent gap — networkidle resolves
+    // either way — so a broken asset path looks exactly like a good render.
+    const missing = []
+    page.on('requestfailed', (request) => missing.push(request.url()))
+    page.on('response', (response) => {
+      if (response.status() >= 400) missing.push(`${response.url()} (${response.status()})`)
+    })
+
+    try {
       // Load page
       await page.goto(pathToFileURL(tmpFile).href, { waitUntil: 'networkidle' })
 
@@ -231,7 +242,6 @@ async function main() {
         const el = await page.$(opts.selector)
         if (!el) {
           console.error(`✗ ${job.name}.png — selector not found: ${opts.selector}`)
-          await page.close()
           continue
         }
         await el.screenshot({ path: job.outPath, omitBackground: true })
@@ -243,9 +253,13 @@ async function main() {
         })
       }
 
+      if (missing.length > 0) {
+        console.error(`! ${job.name}.png — ${missing.length} asset(s) failed to load:`)
+        for (const url of missing) console.error(`    ${url}`)
+      }
       console.log(`✓ ${job.name}.png`)
-      await page.close()
     } finally {
+      await page.close()
       rmSync(tmpFile, { force: true })
     }
   }

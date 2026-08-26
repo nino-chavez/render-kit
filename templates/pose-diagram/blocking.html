@@ -1,0 +1,219 @@
+<!-- viewport: 1000x720 -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    /* System font stack only. A webfont would make every render depend on a
+       network fetch, and a blocking diagram gains nothing from the typeface. */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 1000px;
+      height: 720px;
+      overflow: hidden;
+      background: #f7f6f3;
+      color: #16161a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .sheet { width: 1000px; height: 720px; padding: 26px 32px 24px; display: flex; flex-direction: column; }
+
+    .phase { font-size: 16px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: #8a8578; }
+    .title { font-size: 42px; font-weight: 700; letter-spacing: -.02em; margin-top: 2px; }
+    .cue { font-size: 21px; margin-top: 7px; color: #3d3a33; }
+    .cue b { font-weight: 700; }
+
+    .stage { flex: 1; min-height: 0; margin-top: 6px; }
+    svg { width: 100%; height: 100%; display: block; }
+
+    .footer { display: flex; gap: 12px; align-items: stretch; }
+
+    .kit { display: flex; gap: 9px; }
+    .chip {
+      background: #16161a; color: #f7f6f3; border-radius: 8px;
+      padding: 8px 14px; font-size: 24px; font-weight: 700; letter-spacing: -.01em;
+      display: flex; align-items: center; white-space: nowrap;
+    }
+    .chip small { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; opacity: .6; margin-right: 7px; }
+
+    .watch {
+      flex: 1; background: #fff3cd; border-left: 6px solid #d99b00; border-radius: 6px;
+      padding: 8px 14px; font-size: 19px; line-height: 1.25; display: flex; align-items: center;
+    }
+    .watch b { text-transform: uppercase; font-size: 13px; letter-spacing: .08em; color: #8a6a00; margin-right: 9px; white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="phase" id="phase"></div>
+    <div class="title" id="title"></div>
+    <div class="cue" id="cue"></div>
+    <div class="stage"><svg id="stage" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <div class="footer">
+      <div class="kit" id="kit"></div>
+      <div class="watch" id="watch"><b>Watch</b><span id="watch-text"></span></div>
+    </div>
+  </div>
+
+<script>
+// Pure renderer. Geometry arrives precomputed in RENDER_DATA.layout, produced by
+// lib/pose-layout.mjs — which also checks it. Chromium refuses ES module imports
+// over file://, so a template loaded from disk cannot share a module; laying out
+// in Node instead means the numbers drawn here are the numbers already verified.
+const data = window.RENDER_DATA || {};
+const layout = data.layout;
+if (!layout) throw new Error('RENDER_DATA.layout is missing — run: node lib/pose-layout.mjs build <spec.json> <variants.json>');
+const { figures, depths, stage: STAGE, ground: GROUND, depthLift: DEPTH_LIFT, camera: CAMERA } = layout;
+
+const svg = document.getElementById('stage');
+svg.setAttribute('viewBox', `0 0 ${STAGE.width} ${STAGE.height}`);
+const ns = 'http://www.w3.org/2000/svg';
+const el = (name, attrs) => {
+  const node = document.createElementNS(ns, name);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+  return node;
+};
+const FONT = '-apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif';
+
+// Every name carries a paper halo. A carried child's name has to sit beside the
+// adult holding them, and in a line-up that lands on somebody's torso whichever
+// side it picks — so legibility cannot depend on what is behind the text.
+function label(text, x, y, size, weight, fill = '#16161a', anchor = 'middle') {
+  const t = el('text', {
+    x, y, 'text-anchor': anchor, 'font-size': size, 'font-weight': weight, fill,
+    'font-family': FONT, stroke: PAPER, 'stroke-width': size * 0.28,
+    'stroke-linejoin': 'round', 'paint-order': 'stroke fill',
+  });
+  t.textContent = text;
+  return t;
+}
+
+// Receding ground plane, back to front.
+for (const d of depths) {
+  const y = GROUND - d * DEPTH_LIFT;
+  const line = el('line', { x1: 30, y1: y, x2: STAGE.width - 30, y2: y, stroke: '#d8d4c8', 'stroke-width': d === 0 ? 3 : 2 });
+  if (d > 0) line.setAttribute('stroke-dasharray', '10 8');
+  svg.appendChild(line);
+}
+
+// Contact shadows first, under everything.
+for (const fig of figures) {
+  if (!fig.shadow) continue;
+  svg.appendChild(el('ellipse', { ...fig.shadow, fill: '#16161a', opacity: 0.13 }));
+}
+
+const PAPER = '#f7f6f3';
+
+const limb = (x1, y1, x2, y2, stroke, width) => el('line', {
+  x1, y1, x2, y2, stroke, 'stroke-width': width, 'stroke-linecap': 'round',
+});
+
+/**
+ * Draw a set of limbs with a paper-coloured casing under them.
+ *
+ * A limb in the body's own colour, lying against that body, is invisible — the
+ * arms were being drawn correctly and simply could not be seen. The casing cuts
+ * a channel of background around each limb, which is how pictogram systems
+ * separate a arm from a torso without outlining everything.
+ *
+ * Every casing is laid down before any limb, or the second limb's casing erases
+ * the first limb.
+ */
+function drawLimbs(segments) {
+  for (const [x1, y1, x2, y2, , width] of segments) {
+    svg.appendChild(limb(x1, y1, x2, y2, PAPER, width * 2.15));
+  }
+  for (const [x1, y1, x2, y2, stroke, width] of segments) {
+    svg.appendChild(limb(x1, y1, x2, y2, stroke, width));
+  }
+}
+
+// Every torso first, then every limb.
+//
+// Not figure by figure: a limb's casing is paper-coloured, so a neighbour drawn
+// afterwards paints over it, and a neighbour drawn before gets a bite taken out
+// of it. In a group standing close enough to touch — which is every pose here —
+// that showed up as a hand stopping short of the waist it was supposed to be
+// holding. Torsos, then casings, then limbs keeps the separation uniform and
+// puts every hand on top of the person it lands on.
+for (const fig of figures) {
+  const { box } = fig;
+  // A carried child overlaps the adult holding them, so it keeps a paper outline
+  // to stay a separate body. Riders sort last, so nothing paints over it.
+  const edge = fig.carried
+    ? { stroke: PAPER, 'stroke-width': Math.max(3, box.limb * 0.7) }
+    : {};
+  const g = el('g', { transform: `translate(${fig.x}, 0)` });
+  g.appendChild(el('path', {
+    d: `M ${-box.halfShoulder} ${box.shoulderY} L ${box.halfShoulder} ${box.shoulderY} L ${box.halfHip} ${box.feetY} L ${-box.halfHip} ${box.feetY} Z`,
+    fill: fig.tone, ...edge,
+  }));
+  g.appendChild(el('circle', {
+    cx: 0, cy: box.shoulderY - box.headR * 1.35, r: box.headR, fill: fig.tone, ...edge,
+  }));
+  svg.appendChild(g);
+}
+
+const segments = [];
+for (const fig of figures) {
+  for (const a of fig.arms || []) {
+    segments.push([a.from.x, a.from.y, a.to.x, a.to.y, fig.limbTone, a.width]);
+  }
+  if (!fig.rig) continue;
+  const host = figures.find((f) => f.role === fig.carriedBy);
+  for (const [a, b, c, d] of fig.rig.hostArms) {
+    segments.push([a, b, c, d, host ? host.limbTone : fig.limbTone, fig.rig.width * 1.15]);
+  }
+  for (const [a, b, c, d] of fig.rig.legs) segments.push([a, b, c, d, fig.limbTone, fig.rig.width]);
+}
+drawLimbs(segments);
+
+// A dot where the hold actually lands, so the grip is legible at thumbnail size.
+for (const fig of figures) {
+  for (const arm of fig.arms || []) {
+    if (arm.at === 'rest') continue;
+    svg.appendChild(el('circle', { cx: arm.to.x, cy: arm.to.y, r: arm.width * 0.62, fill: fig.limbTone }));
+  }
+}
+
+// Labels last, so no figure covers a name.
+for (const fig of figures) {
+  svg.appendChild(label(fig.role, fig.labelX, fig.labelY, 20, 700, '#16161a', fig.labelAnchor));
+  if (fig.note) svg.appendChild(label(fig.note, fig.labelX, fig.noteY, 16, 500, '#6b675d', fig.labelAnchor));
+}
+
+// Camera mark. A blocking diagram without the camera position is half a spec.
+const { x: camX, y: camY } = CAMERA;
+// Sight line stops short of the label band rather than crossing a name.
+svg.appendChild(el('line', {
+  x1: camX, y1: camY - 20, x2: camX, y2: layout.bounds.bottom + 8,
+  stroke: '#16161a', 'stroke-width': 2, 'stroke-dasharray': '5 7', opacity: 0.35,
+}));
+svg.appendChild(el('path', {
+  d: `M ${camX - 24} ${camY + 13} L ${camX + 24} ${camY + 13} L ${camX + 24} ${camY - 9} L ${camX + 9} ${camY - 9} L ${camX + 3} ${camY - 18} L ${camX - 13} ${camY - 18} L ${camX - 19} ${camY - 9} L ${camX - 24} ${camY - 9} Z`,
+  fill: '#16161a',
+}));
+if (data.distance) {
+  // Left-anchored, so a long distance ("20 ft closing to 10") grows away from
+  // the camera mark instead of centring itself back over it.
+  svg.appendChild(label(data.distance, camX + 40, camY + 8, 19, 600, '#3d3a33', 'start'));
+}
+
+document.getElementById('phase').textContent = data.phase || '';
+document.getElementById('title').textContent = data.title || '';
+document.getElementById('cue').innerHTML = data.cue ? `<b>Say:</b> ${data.cue}` : '';
+document.getElementById('watch-text').textContent = data.watch || '';
+
+const kit = document.getElementById('kit');
+for (const [key, value] of [['lens', data.lens], ['at', data.aperture], ['shutter', data.shutter]]) {
+  if (!value) continue;
+  const chip = document.createElement('div');
+  chip.className = 'chip';
+  chip.innerHTML = `<small>${key}</small>${value}`;
+  kit.appendChild(chip);
+}
+</script>
+</body>
+</html>
