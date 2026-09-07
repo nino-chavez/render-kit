@@ -23,6 +23,13 @@ no render standard, so no content gate is being checked. If the asset carries co
 a photograph, or a person's name, that sentence is the only thing standing between an unreviewed
 asset and an audience.
 
+## Photo-led sports social work
+
+For the approved Flickday / Let’s Pepper photo-and-type approach, read
+[`templates/photo-led-social/CONTRACT.md`](templates/photo-led-social/CONTRACT.md).
+It owns composition, source-photo preservation, and the selected visual baselines.
+Consumer brand/content gates and publication approval still apply.
+
 ## Adopting the routing in a new repo — one file
 
 Copy the template and edit the gates. The three agents and the dispatch hook are already global and
