@@ -6,6 +6,7 @@ import { dirname, join, basename, resolve } from 'node:path'
 import { readFileSync, writeFileSync, rmSync, mkdirSync, existsSync } from 'node:fs'
 import process from 'node:process'
 import { runWalkthrough } from '../lib/walkthrough-cmd.mjs'
+import { runClips } from '../lib/clips-cmd.mjs'
 
 // Parse CLI arguments
 function parseArgs(args) {
@@ -71,6 +72,8 @@ Usage:
   render-kit <template.html> [options]           render a template to PNG(s)
   render-kit walkthrough <manifest.json> ...      one capture → interactive player + motion video
                                                   (run \`render-kit walkthrough --help\`)
+  render-kit clips <manifest.json> ...            cut scenes from a recording for hype/sizzle
+                                                  (run \`render-kit clips --help\`)
 
 Options:
   --data <file.json>        Inject JSON data (exposed as RENDER_DATA global)
@@ -99,6 +102,10 @@ async function main() {
   // multi-output path. Anything else is the original template→PNG behavior, unchanged.
   if (process.argv[2] === 'walkthrough') {
     await runWalkthrough(process.argv.slice(3))
+    return
+  }
+  if (process.argv[2] === 'clips') {
+    await runClips(process.argv.slice(3))
     return
   }
 
