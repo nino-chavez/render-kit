@@ -34,7 +34,7 @@ the real app in snapshot mode).
 | `steps[].frame` | **Required.** Still filename inside `<label>/`. |
 | `steps[].kind` | `click` \| `type` \| `scroll` \| `select` \| `annotate`. Omitted → `annotate`. |
 | `steps[].caption` | Caption text; `""`/absent → no caption. |
-| `steps[].hotspot` | `{x,y,w,h}` rect (element target), point (`w:0,h:0`), or `null` (full-frame). |
+| `steps[].hotspot` | `{x,y,w,h}` rect (element target), point (`w:0,h:0`), or `null` (full-frame). **`x`,`y` is the target's CENTER, not its top-left corner**; `w`,`h` is its size. |
 
 ## Coordinate space — the one thing to get right
 
@@ -44,6 +44,22 @@ logical box. Every emitter scales from `width`/`height`, so:
 
 - overlays never shift when you change capture DPI, and
 - a high-DPI still simply means a **crisper zoom** in the video emitter.
+
+**`x`,`y` is the center of the target.** A producer that has a top-left rect (`getBoundingClientRect()`,
+`XCUIElement.frame`, a hand-measured box) writes `x: left + w / 2`, `y: top + h / 2`. Writing the
+corner puts every ring and zoom half a target off, up and to the left (seen 2026-09-24 on a
+hand-written ucp-checkout-qa manifest).
+
+**The canvas may crop.** `--canvas` need not match `width`/`height`. The video emitter fills the
+canvas with the still (`object-fit: cover`): one uniform scale, centered, with the overflowing axis
+cropped equally on both sides. `lib/hotspot-motion.mjs` owns that mapping (`coverFit`,
+`hotspotToCanvas`, `motionForCanvas`, covered by `--selftest`), and the renderer passes the result to
+templates as `coverMotion` and `hotspotCanvas` in canvas space. A template whose still fills the canvas
+must use those. Scaling x by canvas/width and y by canvas/height separately is exact only when the
+aspects match; a 16:10 still on a 1920×1080 canvas otherwise misses by up to half the cropped band.
+`motion` stays in logical percent for templates that fit the still into a box of its own aspect
+(`motion-portrait.html`). Content inside the cropped band is not on screen, so choose a canvas that
+matches the capture's shape when targets sit near the top or bottom edge.
 
 Capture at 3× (`REEL_DPI=3` in the rally-hq harness) when the stills feed the video emitter — a
 1× still visibly softens once the camera pushes in; a 3× still stays sharp through the 2× max zoom.

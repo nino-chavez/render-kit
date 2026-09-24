@@ -36,6 +36,11 @@ Copy the template and edit the gates. The three agents and the dispatch hook are
 find the file by walking up from the working directory; there is no hook edit, no settings change,
 and no per-repo agent copy.
 
+The walk starts at the **shell's working directory**, not at the manifest or `--out` path. A render
+run from the workspace root, or from render-kit itself, for a repo that has a standard reports "no
+standard" and is not routed (seen 2026-09-24). Run render-kit from inside the repo that owns the
+asset, or `cd` there first.
+
 ```bash
 mkdir -p standards && cp ~/Workspace/dev/tools/render-kit/templates/asset-render-standard.template.md standards/asset-render-standard.md
 ```
