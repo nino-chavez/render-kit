@@ -83,8 +83,8 @@ raw element frame must convert: `x: frame.minX + frame.width / 2`, `y: frame.min
 | Mode | Renderer | Input | Typical length | Destination |
 |---|---|---|---|---|
 | Tutorial | `render-kit walkthrough --emit video` (+ `--template portrait` for phone apps) and `--emit interactive` | the manifest + stills | one clip per step, full walkthrough | help center, onboarding, support docs |
-| Hype | HyperFrames composition | `render-kit clips` output + `captions.hype` | 15–30 s | social, landing page |
-| Sizzle | HyperFrames composition | `render-kit clips` output + `captions.sizzle` | 15–30 s | App Store preview, investor/stakeholder reel |
+| Hype | HyperFrames composition | `render-kit clips` output + `captions.hype` | 15–30 s | social; a 15–30 s app-footage-only cut of it is the App Store preview |
+| Sizzle | HyperFrames composition | `render-kit clips` output from several recorded flows + `captions.sizzle` | 45–90 s | website hero, investor/stakeholder reel |
 
 Hype and sizzle are a different lane from tutorial: they are authored HyperFrames compositions
 built from short cut clips (`render-kit clips`, below), not a straight per-step render. An App
