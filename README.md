@@ -33,9 +33,21 @@ render-kit walkthrough create-tournament.interactive.json --emit interactive --o
 
 # motion video over the stills (Ken-Burns push + spotlight + captions; silent)
 render-kit walkthrough create-tournament.interactive.json --emit video --out out/create-tournament.mp4 --canvas 1920x1080
+
+# stock portrait tutorial look for a phone app, recolored to the app's brand
+render-kit walkthrough today.interactive.json --emit video --canvas 1080x1920 \
+  --template portrait --tokens brand-tokens.json --out out/today-tutorial.mp4
 ```
 
-The manifest is produced by an app-specific capture harness (rally-hq's `tests/e2e/record-interactive.spec.ts` is the reference producer). Per-step motion is decided by `lib/hotspot-motion.mjs` — pure and unit-tested (`node lib/hotspot-motion.mjs --selftest`). Capture at 3× DPI when the stills feed the video emitter, so deep zooms stay crisp. Narrated promo video is deliberately a different tool (`forge-signal/templates/demo-reel`), not this lane.
+The manifest comes from an app-specific capture harness. Two reference producers: rally-hq's `tests/e2e/record-interactive.spec.ts` (web, Playwright) and Minder's `MarketingTourUITests.swift` + `scripts/record-tour.sh` (native iOS, XCUITest). [templates/walkthrough/CONTRACT.md](templates/walkthrough/CONTRACT.md) covers both, plus the optional `at`/`beat`/`captions` step fields, capture gotchas, and the tutorial/hype/sizzle mode table. Per-step motion is decided by `lib/hotspot-motion.mjs` — pure and unit-tested (`node lib/hotspot-motion.mjs --selftest`). Capture at 3× DPI when the stills feed the video emitter, so deep zooms stay crisp. Narrated promo video is a different tool (`forge-signal/templates/demo-reel`), not this lane.
+
+Cutting short scenes for a hype or sizzle reel (a different lane — an authored HyperFrames composition, not a per-step render) starts with `render-kit clips`, which turns a producer's screen recording plus the manifest's step `at` times into named, jump-cuttable clips:
+
+```bash
+render-kit clips today.interactive.json --master master.mp4 --spec scenes.json --out-dir out/clips
+```
+
+See CONTRACT.md's "`render-kit clips`" section for the scene-spec shape and what `clips.json` records.
 
 ## Install
 

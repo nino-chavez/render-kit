@@ -15,6 +15,6 @@
     "pptxgenjs": "^4.0.1"
   },
   "scripts": {
-    "test": "node lib/pose-layout.mjs --selftest && node lib/map-project.mjs --selftest && node lib/hotspot-motion.mjs --selftest && node lib/deck-build.mjs --selftest"
+    "test": "node lib/pose-layout.mjs --selftest && node lib/map-project.mjs --selftest && node lib/hotspot-motion.mjs --selftest && node lib/clip-plan.mjs --selftest && node lib/deck-build.mjs --selftest"
   }
 }

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<!--
+  Stock portrait tutorial look for render-kit's walkthrough video emitter, selected with
+  `--template portrait`. Same seek interface as templates/walkthrough/motion.html: reads
+  window.RENDER_DATA, exposes window.__seek(p), resolves window.__ready.
+  Portrait layout: the phone screen sits in a rounded frame, the caption lives in a fixed band
+  below it (with a "title · Step N of M" line and a progress bar) so text never covers the thing
+  it describes.
+  Colors: defaults live in the first :root block below. --tokens overrides land in the SECOND
+  :root block (the /*WALKTHROUGH-TOKENS*/ placeholder) so a later declaration of the same
+  property wins the cascade — do not merge the two blocks.
+-->
+<style>
+  :root {
+    --wt-canvas: #eef0f4;
+    --wt-surface: #ffffff;
+    --wt-ink: #14161c;
+    --wt-secondary-ink: #52596b;
+    --wt-accent: #3452eb;
+    --wt-accent-soft: #dde3fd;
+    --wt-divider: #d7dbe4;
+    --wt-font: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  :root { /*WALKTHROUGH-TOKENS*/ }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--wt-canvas); overflow: hidden; }
+  #root { position: relative; overflow: hidden; background: var(--wt-canvas); font-family: var(--wt-font); }
+  #screen { position: absolute; overflow: hidden; border-radius: 44px;
+    background: var(--wt-surface);
+    box-shadow: 0 30px 80px rgba(20, 22, 28, .18), 0 0 0 1px var(--wt-divider); }
+  #still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    will-change: transform; }
+  #spot { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+  #ripple { position: absolute; border-radius: 50%; border: 4px solid var(--wt-accent);
+    pointer-events: none; opacity: 0; will-change: transform, opacity; }
+  #band { position: absolute; left: 0; right: 0; bottom: 0; background: var(--wt-surface);
+    border-top: 1px solid var(--wt-divider); }
+  #meta { position: absolute; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--wt-secondary-ink); }
+  #bar { position: absolute; height: 6px; border-radius: 3px; background: var(--wt-accent-soft); overflow: hidden; }
+  #barFill { height: 100%; background: var(--wt-accent); border-radius: 3px; }
+  #cap { position: absolute; color: var(--wt-ink); font-weight: 700; line-height: 1.18;
+    will-change: opacity, transform; }
+</style>
+</head>
+<body>
+<div id="root">
+  <div id="screen"><img id="still" alt="" /><div id="spot"></div><div id="ripple"></div></div>
+  <div id="band"><div id="meta"></div><div id="bar"><div id="barFill"></div></div><div id="cap"></div></div>
+</div>
+<script>
+// STEP is injected by the renderer as window.RENDER_DATA before load — same shape as
+// templates/walkthrough/motion.html, plus stepIndex/stepCount/title (see emit-video.mjs):
+//   { frame, caption, hotspot:{x,y,w,h}|null, motion:{scale,originX,originY,ripple,rippleX,rippleY},
+//     width, height, canvasW, canvasH, stepIndex, stepCount, title }
+const S = window.RENDER_DATA;
+const CW = S.canvasW, CH = S.canvasH;
+const $ = (id) => document.getElementById(id);
+const root = $('root'), screen = $('screen'), still = $('still'), spot = $('spot'),
+      ripple = $('ripple'), band = $('band'), meta = $('meta'), bar = $('bar'),
+      barFill = $('barFill'), cap = $('cap');
+root.style.width = CW + 'px';
+root.style.height = CH + 'px';
+
+// Layout: caption band takes the bottom ~22%; the screen fits the rest, centered.
+const bandH = Math.round(CH * 0.22);
+band.style.height = bandH + 'px';
+const pad = Math.round(CW * 0.07);
+const maxH = CH - bandH - pad * 1.6, maxW = CW - pad * 2;
+const aspect = S.width / S.height;
+const scrH = Math.min(maxH, maxW / aspect), scrW = scrH * aspect;
+screen.style.width = scrW + 'px';
+screen.style.height = scrH + 'px';
+screen.style.left = (CW - scrW) / 2 + 'px';
+screen.style.top = (CH - bandH - scrH) / 2 + 'px';
+
+const m = S.motion;
+still.src = S.frame;
+still.style.transformOrigin = m.originX + '% ' + m.originY + '%';
+
+// Band content: step counter, progress, caption.
+const count = S.stepCount || 1, index = S.stepIndex || 0;
+meta.textContent = (S.title ? S.title + '  ·  ' : '') + 'Step ' + (index + 1) + ' of ' + count;
+meta.style.fontSize = Math.round(CH * 0.0135) + 'px';
+meta.style.left = pad + 'px';
+meta.style.top = Math.round(bandH * 0.16) + 'px';
+bar.style.left = pad + 'px';
+bar.style.right = pad + 'px';
+bar.style.top = Math.round(bandH * 0.16 + CH * 0.024) + 'px';
+cap.textContent = S.caption || '';
+cap.style.fontSize = Math.round(CH * 0.028) + 'px';
+cap.style.left = pad + 'px';
+cap.style.right = pad + 'px';
+cap.style.top = Math.round(bandH * 0.16 + CH * 0.045) + 'px';
+
+// Spotlight inside the screen frame.
+if (S.hotspot) {
+  const r = S.hotspot.w > 0 ? Math.max(14, (Math.max(S.hotspot.w, S.hotspot.h) / S.width) * 100 * 1.4) : 20;
+  spot.style.background = 'radial-gradient(circle at ' + m.originX + '% ' + m.originY + '%, rgba(20,22,28,0) ' + r + '%, rgba(20,22,28,.5) ' + (r + 30) + '%)';
+} else {
+  spot.style.display = 'none';
+}
+// Ripple on the target, in screen px.
+if (m.ripple) {
+  const d = Math.round(scrW * 0.2);
+  ripple.style.width = d + 'px';
+  ripple.style.height = d + 'px';
+  ripple.style.left = (m.rippleX / 100 * scrW - d / 2) + 'px';
+  ripple.style.top = (m.rippleY / 100 * scrH - d / 2) + 'px';
+} else {
+  ripple.style.display = 'none';
+}
+
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const ramp = (p, a, b) => Math.max(0, Math.min(1, (p - a) / (b - a)));
+const lerp = (a, b, t) => a + (b - a) * t;
+window.__seek = function (p) {
+  still.style.transform = 'scale(' + lerp(1.0, m.scale, easeOut(Math.min(1, p / 0.85))) + ')';
+  spot.style.opacity = ramp(p, 0.08, 0.30);
+  const cp = ramp(p, 0.04, 0.22);
+  cap.style.opacity = cp;
+  cap.style.transform = 'translateY(' + lerp(14, 0, easeOut(cp)) + 'px)';
+  barFill.style.width = ((index + Math.min(1, p)) / count * 100) + '%';
+  if (m.ripple) {
+    const rp = ramp(p, 0.28, 0.55);
+    ripple.style.opacity = rp < 1 ? Math.sin(rp * Math.PI) : 0;
+    ripple.style.transform = 'scale(' + lerp(0.5, 1.25, rp) + ')';
+  }
+};
+window.__seek(0);
+window.__ready = Promise.all([document.fonts.ready, new Promise((r) => requestAnimationFrame(() => r()))]);
+</script>
+</body>
+</html>
