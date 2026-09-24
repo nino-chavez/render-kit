@@ -62,5 +62,10 @@ Motion per `kind` is decided by `lib/hotspot-motion.mjs` (`hotspotToMotion`) —
 function (`node lib/hotspot-motion.mjs --selftest`): `click`/`select` push toward the target and
 ripple, `type` frames the field, `scroll`/`annotate` hold near full-frame with a gentle drift.
 
+An app can replace the video look (caption layout, type, brand colors) with
+`--template <html>`. The template must keep the default's interface: read `window.RENDER_DATA`,
+expose `window.__seek(p)` for p in [0,1], and resolve `window.__ready`. The default stays
+`templates/walkthrough/motion.html`.
+
 Narration is deliberately **not** here — a narrated marketing/promo video is a different job
 (authored creative, TTS, music). This lane is silent motion over a real walkthrough.
