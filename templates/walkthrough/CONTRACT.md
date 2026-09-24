@@ -122,6 +122,10 @@ render-kit walkthrough create-tournament.interactive.json --emit interactive --o
 render-kit walkthrough create-tournament.interactive.json --emit video --out out/create-tournament.mp4 --canvas 1920x1080
 ```
 
+The interactive player sizes its stage from the manifest's `width`/`height` to fit the viewport's
+width and height (capped at 1100px wide), so portrait phone captures keep the caption and Back/Next
+in view. Under `prefers-reduced-motion` its hotspot pulses and transitions are off.
+
 Motion per `kind` is decided by `lib/hotspot-motion.mjs` (`hotspotToMotion`) — a pure, unit-tested
 function (`node lib/hotspot-motion.mjs --selftest`): `click`/`select` push toward the target and
 ripple, `type` frames the field, `scroll`/`annotate` hold near full-frame with a gentle drift.
