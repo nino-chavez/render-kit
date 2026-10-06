@@ -180,8 +180,9 @@ Every video render also writes `<name>.timeline.json` beside the mp4:
 Times are frame-derived (`startFrame / fps`), and the emitter fails rather than write a sidecar
 whose frame count differs from what it rendered. A downstream composition that adds music or
 sound effects can place them on real step boundaries from this file instead of re-deriving them,
-the same way `clips.json` serves cut clips. The sidecar does not supply the caption track; the
-audio paragraph above still applies.
+the same way `clips.json` serves cut clips. The sidecar is not a caption track: a composition
+that adds speech or other audio needed to understand it supplies synchronized captions through
+its own caption workflow.
 
 Narration is deliberately **not** here — a narrated marketing/promo video is a different job
 (authored creative, TTS, music). This lane is silent motion over a real walkthrough.
