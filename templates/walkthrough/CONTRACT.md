@@ -32,7 +32,7 @@ the real app in snapshot mode).
 | `title` | Optional. Display title; falls back to `tour`, then `label`, title-cased. |
 | `width` / `height` | **Required.** The *logical* capture size — the coordinate space `hotspot` is measured in. |
 | `steps[].frame` | **Required.** Still filename inside `<label>/`. |
-| `steps[].kind` | `click` \| `type` \| `scroll` \| `select` \| `annotate`. Omitted → `annotate`. |
+| `steps[].kind` | `click` \| `type` \| `scroll` \| `select` \| `annotate` \| `navigate`. Omitted → `annotate`. `navigate` marks a step that lands on a new screen or page. |
 | `steps[].caption` | Caption text; `""`/absent → no caption. |
 | `steps[].hotspot` | `{x,y,w,h}` rect (element target), point (`w:0,h:0`), or `null` (full-frame). **`x`,`y` is the target's CENTER, not its top-left corner**; `w`,`h` is its size. |
 
@@ -144,7 +144,7 @@ in view. Under `prefers-reduced-motion` its hotspot pulses and transitions are o
 
 Motion per `kind` is decided by `lib/hotspot-motion.mjs` (`hotspotToMotion`) — a pure, unit-tested
 function (`node lib/hotspot-motion.mjs --selftest`): `click`/`select` push toward the target and
-ripple, `type` frames the field, `scroll`/`annotate` hold near full-frame with a gentle drift.
+ripple, `type` frames the field, `scroll`/`annotate`/`navigate` hold near full-frame with a gentle drift.
 
 An app can replace the video look (caption layout, type, brand colors) with
 `--template <html>`. The template must keep the default's interface: read `window.RENDER_DATA`,
