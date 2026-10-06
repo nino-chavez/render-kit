@@ -176,7 +176,9 @@ expose `window.__seek(p)` for p in [0,1], and resolve `window.__ready`. The defa
 (`templates/walkthrough/motion-portrait.html`) by name; any other value is still a path. Pair it
 with `--tokens <file.json|file.css>` to recolor it — a JSON object of CSS custom-property values
 (for example `{"wt-accent": "#4d465f"}`) or a raw CSS declaration list — without editing the
-template. See `README.md` for a worked example.
+template. See `README.md` for a worked example. A template that accepts `--tokens` carries the
+placeholder `/*WALKTHROUGH-TOKENS*/` exactly once, inside its overriding `:root` block; render-kit
+stops with an error on zero or two, because either one would silently ignore the tokens.
 
 ### Timing: `--plan` and the timeline sidecar
 
