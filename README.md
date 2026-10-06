@@ -31,6 +31,10 @@ Every script launched a headless browser, loaded an HTML template, injected data
 # interactive click-through (self-contained folder: index.html + copied stills)
 render-kit walkthrough create-tournament.interactive.json --emit interactive --out-dir out/create-tournament
 
+# same player in the app's colors (gold by default)
+render-kit walkthrough create-tournament.interactive.json --emit interactive \
+  --tokens brand-tokens.json --out-dir out/create-tournament
+
 # check each step's timing first: prints a table, renders nothing
 render-kit walkthrough create-tournament.interactive.json --emit video --plan
 
