@@ -176,7 +176,20 @@ expose `window.__seek(p)` for p in [0,1], and resolve `window.__ready`. The defa
 (`templates/walkthrough/motion-portrait.html`) by name; any other value is still a path. Pair it
 with `--tokens <file.json|file.css>` to recolor it — a JSON object of CSS custom-property values
 (for example `{"wt-accent": "#4d465f"}`) or a raw CSS declaration list — without editing the
-template. See `README.md` for a worked example.
+template. See `README.md` for a worked example. A template that accepts `--tokens` carries the
+placeholder `/*WALKTHROUGH-TOKENS*/` exactly once, inside its overriding `:root` block; render-kit
+stops with an error on zero or two, because either one would silently ignore the tokens.
+
+The interactive player takes the same `--tokens` file. It is gold by default and reads two names:
+`wt-accent` (hotspot ring, dot, caption card, progress bar; the ring glow is derived from it) and
+`wt-on-accent` (caption text on the accent, default `#111827`). Set `wt-on-accent` whenever the
+accent is dark enough that dark text loses contrast. The player ignores the video-only names
+(`wt-canvas`, `wt-surface`, and the rest), so one brand file can drive both outputs.
+
+```bash
+render-kit walkthrough create-tournament.interactive.json --emit interactive \
+  --tokens brand-tokens.json --out-dir out/create-tournament
+```
 
 ### Timing: `--plan` and the timeline sidecar
 
