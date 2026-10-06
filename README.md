@@ -31,7 +31,10 @@ Every script launched a headless browser, loaded an HTML template, injected data
 # interactive click-through (self-contained folder: index.html + copied stills)
 render-kit walkthrough create-tournament.interactive.json --emit interactive --out-dir out/create-tournament
 
-# motion video over the stills (Ken-Burns push + spotlight + captions; silent)
+# check each step's timing first: prints a table, renders nothing
+render-kit walkthrough create-tournament.interactive.json --emit video --plan
+
+# motion video over the stills (Ken-Burns push + spotlight + captions; silent; also writes create-tournament.timeline.json)
 render-kit walkthrough create-tournament.interactive.json --emit video --out out/create-tournament.mp4 --canvas 1920x1080
 
 # stock portrait tutorial look for a phone app, recolored to the app's brand

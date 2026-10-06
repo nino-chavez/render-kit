@@ -155,6 +155,34 @@ with `--tokens <file.json|file.css>` to recolor it — a JSON object of CSS cust
 (for example `{"wt-accent": "#4d465f"}`) or a raw CSS declaration list — without editing the
 template. See `README.md` for a worked example.
 
+### Timing: `--plan` and the timeline sidecar
+
+Each step's on-screen time comes from its caption length (`lib/video-timeline.mjs`, unit-tested
+with `node lib/video-timeline.mjs --selftest`). Check that pacing before spending a render:
+
+```bash
+render-kit walkthrough create-tournament.interactive.json --emit video --plan
+```
+
+`--plan` prints one row per step (start, duration, frames, kind, caption) and the total, then
+exits. It renders nothing and needs neither ffmpeg nor `--out`. To change a step's time, change
+its caption.
+
+Every video render also writes `<name>.timeline.json` beside the mp4:
+
+```json
+{ "label": "create-tournament", "title": "Create Tournament", "video": "create-tournament.mp4",
+  "canvas": { "width": 1920, "height": 1080 }, "fps": 30, "frames": 2197, "duration": 73.233,
+  "steps": [{ "step": 4, "kind": "type", "caption": "Name it.",
+              "startFrame": 529, "frames": 72, "start": 17.633, "duration": 2.4, "end": 20.033 }] }
+```
+
+Times are frame-derived (`startFrame / fps`), and the emitter fails rather than write a sidecar
+whose frame count differs from what it rendered. A downstream composition that adds music or
+sound effects can place them on real step boundaries from this file instead of re-deriving them,
+the same way `clips.json` serves cut clips. The sidecar does not supply the caption track; the
+audio paragraph above still applies.
+
 Narration is deliberately **not** here — a narrated marketing/promo video is a different job
 (authored creative, TTS, music). This lane is silent motion over a real walkthrough.
 
