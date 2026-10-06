@@ -33,7 +33,7 @@ the real app in snapshot mode).
 | `width` / `height` | **Required.** The *logical* capture size — the coordinate space `hotspot` is measured in. |
 | `steps[].frame` | **Required.** Still filename inside `<label>/`. |
 | `steps[].kind` | `click` \| `type` \| `scroll` \| `select` \| `annotate` \| `navigate`. Omitted → `annotate`. `navigate` marks a step that lands on a new screen or page. |
-| `steps[].caption` | Caption text; `""`/absent → no caption. |
+| `steps[].caption` | On-screen tutorial copy; `""`/absent → no display text. This is not a synchronized transcript of speech. |
 | `steps[].hotspot` | `{x,y,w,h}` rect (element target), point (`w:0,h:0`), or `null` (full-frame). **`x`,`y` is the target's CENTER, not its top-left corner**; `w`,`h` is its size. |
 
 ## Coordinate space — the one thing to get right
@@ -73,7 +73,30 @@ existing manifest and an existing emitter both keep working untouched.
 |---|---|
 | `steps[].at` | Seconds from the start of the producer's own screen recording. Used to cut video clips (`render-kit clips`) — not read by `interactive` or `video`. |
 | `steps[].beat` | A named group of steps (for example `beat2-details`), free-form string. Lets a producer or a downstream tool cluster steps into scenes. |
-| `steps[].captions` | `{ "tutorial": "...", "hype": "...", "sizzle": "..." }` — per-mode copy. `caption` stays the tutorial copy read by `interactive` and `video`; `captions.hype`/`captions.sizzle` are read by the hype/sizzle lane (see below). |
+| `steps[].captions` | `{ "tutorial": "...", "hype": "...", "sizzle": "..." }` — per-mode display copy, not accessibility caption tracks. `caption` stays the tutorial copy read by `interactive` and `video`; `captions.hype`/`captions.sizzle` supply the authored hype/sizzle lane (see below). |
+
+### Write for the output's job
+
+Tutorial copy identifies the action or result the viewer needs at this step. Keep
+real UI labels exact. Hype and sizzle copy can select a supported benefit, but a
+shorter line must preserve the claim's subject, scope and necessary qualification.
+A screen recording proves what it shows; it does not prove an unshown outcome or
+performance claim. Keep the evidence for those claims in the owning script or brief.
+
+Review display text with the actual frame: it must leave the demonstrated control
+visible and readable. Check motion output at normal speed and the intended display
+size. The video emitter estimates each step's duration from word count and caps it;
+that estimate does not establish reading time (`--emit video --plan` prints each step's
+estimate). If copy cannot be read while following the action, shorten or split the step
+and inspect the result again.
+
+The tutorial video emitter and cut clips are silent. If a downstream composition
+adds speech or other audio needed to understand it, provide accurate synchronized
+captions through that composition's caption workflow. These manifest fields do not
+provide that track. Also make essential visual-only actions available in narration
+or a descriptive alternative appropriate to the destination. Sound-off viewing and
+access to visual information are separate checks; promotional overlays alone do not
+settle either one.
 
 ## Producers
 
