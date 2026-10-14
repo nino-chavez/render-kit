@@ -383,7 +383,10 @@ Check appearance and structure separately after export:
   PowerPoint package parts by bytes. ZIP metadata and directory entries are not
   slide content. Rewritten XML can still render identically; report that
   distinction instead of calling every package difference a visual defect.
-- Verify the requested note or content change in the exported file too.
+- Verify the requested change in the exported file. For a notes-only edit,
+  compare note content on every slide: unchanged notes must match the source,
+  and edited notes must match the intended change. Ignore serialization-only
+  differences; do not treat a matching marker as proof that the rest survived.
 
 This check adapts [PPT Master's native editing approach](https://github.com/hugohe3/ppt-master/blob/8070d3df1f6f54b5fb60a9ae66e79c664f050212/skills/ppt-master/workflows/edit-native-pptx.md).
 In the [2026-10-14 probe](docs/benchmarks/ppt-master-preservation-20261014.json),
