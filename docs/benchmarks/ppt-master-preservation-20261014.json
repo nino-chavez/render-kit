@@ -1,0 +1,155 @@
+{
+  "date": "2026-10-14",
+  "decision": "Adopt the preservation check in the existing deck workflow; keep current editors. No global PPT Master installation.",
+  "source": {
+    "name": "danada-operator-deck.pptx",
+    "sha256": "fd6e7ebc855eee7d3844e9344d0b85407daba9190a9e03180ece2e4f2b41aaa4",
+    "slides": 9,
+    "imageSlides": 8,
+    "nativeTableSlides": 1,
+    "charts": 0,
+    "masters": 1,
+    "layouts": 1,
+    "originalModified": false
+  },
+  "task": "Append one clearly labeled probe sentence to the first speaker note; leave visible slides unchanged.",
+  "versions": {
+    "renderKitBaseline": "2703266afa336fbe0a0a95caf71fd966e46b897a",
+    "pptMaster": "8070d3df1f6f54b5fb60a9ae66e79c664f050212",
+    "currentPresentationRuntimeBundle": "26.1011.11113"
+  },
+  "method": {
+    "visual": "Convert source and both outputs to PDF with the same local soffice, then render every page with pdftoppm -png -scale-to 1000. Compare RGB pixels exactly. Parent inspected all nine slide triplets.",
+    "structure": "Compare uncompressed ZIP file contents, excluding directory entries. Count native text, pictures and tables in slide XML independently of the exporter report.",
+    "pixelDimensions": [
+      1000,
+      721
+    ],
+    "controls": {
+      "changedSlideXmlRejected": true,
+      "onePixelDifferenceDetected": true,
+      "comparisonIgnoresZipDirectoryEntries": true
+    }
+  },
+  "results": {
+    "current": {
+      "outputSha256": "5d2add0736a107b94e5a7a119059cf937a70d5bc2cad33ba5953fa52c6979317",
+      "slideCount": 9,
+      "changedPixelCountBySlide": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleSlideXmlIdentical": 0,
+      "masterLayoutPartsIdentical": false,
+      "changedPackageFiles": 52,
+      "addedPackageFiles": 10,
+      "removedPackageFiles": 8,
+      "requestedNoteMarkerPresent": true,
+      "nativeTableCountBySlide": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "timing": {
+        "importSeconds": 1.11316525,
+        "exportSeconds": 0.18593879200000016,
+        "totalSeconds": 1.2991052919999997
+      },
+      "setupCorrections": 0,
+      "setupNote": "Used the existing bundled presentation runtime.",
+      "originalNoteContentPreservedBySlide": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "ppt-master": {
+      "outputSha256": "09de535c3ac5cf106fb95cd135e2cb21d8fcbda8282b56c65a46e082232d48ce",
+      "slideCount": 9,
+      "changedPixelCountBySlide": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleSlideXmlIdentical": 9,
+      "masterLayoutPartsIdentical": true,
+      "changedPackageFiles": 3,
+      "addedPackageFiles": 0,
+      "removedPackageFiles": 0,
+      "requestedNoteMarkerPresent": true,
+      "nativeTableCountBySlide": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "timing": {
+        "exportSeconds": 1.503125166054815,
+        "exitCode": 0,
+        "priorAttempt": "System python lacked python-pptx; used existing bundled runtime."
+      },
+      "setupCorrections": 1,
+      "setupNote": "System Python lacked python-pptx; reran with the existing bundled Python runtime. No dependency installation.",
+      "originalNoteContentPreservedBySlide": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "cost": {
+    "newPaidApiCalls": 0,
+    "incrementalMediaApiSpendUsd": 0,
+    "agentAndComputeCostUsd": null
+  },
+  "limits": [
+    "One notes-only edit on one deck; no general quality or speed ranking.",
+    "Eight slides were already images. Their unchanged appearance does not prove complex native-object editing.",
+    "No charts, animations, multiple masters, PowerPoint editing session, or fluent-language review was tested.",
+    "PPT Master reported quality_gate=not-provided; its structural delivery check passed, and the independent rendered and package comparisons are the evidence here.",
+    "Timing is a single run, excludes human/agent work and rendering, and is not a controlled speed comparison.",
+    "The private source and rendered copies are not included in this public receipt. Source and output hashes identify the local artifacts."
+  ],
+  "ownership": {
+    "Blueprint": "Reader, evidence, argument, design intent and review discipline; no presentation engine change.",
+    "RenderKit": "Sheet/table/notes assembly and this delivery check.",
+    "presentationEditor": "Import and edit existing PowerPoint decks.",
+    "PPTMaster": "Pinned comparison source; not installed globally or made the default."
+  }
+}

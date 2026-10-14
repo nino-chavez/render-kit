@@ -22,10 +22,15 @@ This tool consolidates the hand-rolled pattern that was rebuilt independently ac
 
 Every script launched a headless browser, loaded an HTML template, injected data, and saved a PNG. render-kit makes the next one a single command, not a new script.
 
-## Two modes
+## Output routes
 
-- **Template → PNG** (below): the original harness — one HTML template + data → asset(s).
-- **Walkthrough → many outputs** ([templates/walkthrough/CONTRACT.md](templates/walkthrough/CONTRACT.md)): one captured walkthrough manifest (a still + hotspot + caption per step) → an interactive click-through player **and** a motion video, from the same stills, so they can't drift.
+| Job | Route | Boundary |
+| --- | --- | --- |
+| Render a still asset | HTML template + data → PNG | Uses the consuming project's brand and content gates. |
+| Publish a captured walkthrough | [Walkthrough manifest](templates/walkthrough/CONTRACT.md) → interactive player or tutorial video | Both outputs use the same captured stills. |
+| Prepare footage for a promo | `render-kit clips` → named clips | The authored promo belongs in HyperFrames. |
+| Package sheets and notes for a recipient | [Deck builder](#a-deck-someone-else-can-open) → PowerPoint and PDF | Image slides stay images; row slides contain native text and tables. |
+| Edit a supplied PowerPoint deck | Use the existing presentation editor and the [preservation check](#existing-powerpoint-decks) | The deck builder assembles a new file; it does not import an existing deck or template. |
 
 ```bash
 # interactive click-through (self-contained folder: index.html + copied stills)
@@ -360,6 +365,34 @@ slide would be blank. Notes are required — a slide that genuinely needs none
 says `"notes": null`, so the omission is visible in the spec rather than silent.
 
 Run the checks with `npm test`.
+
+### Existing PowerPoint decks
+
+Keep the source deck when the task is to edit its notes or selected slides.
+Work on a copy in the existing presentation editor. Choose the pages and
+objects allowed to change before editing; retain the source's masters,
+layouts, media, and native objects where the editor supports them.
+
+Check appearance and structure separately after export:
+
+- Render the source and output with the same renderer and compare the affected
+  slides. For a notes-only edit, compare every slide; none should change visibly.
+- Check that tables, charts, and text remain native where required. Matching
+  pixels alone cannot distinguish editable objects from a flattened image.
+- If the job requires untouched native parts to survive exactly, compare those
+  PowerPoint package parts by bytes. ZIP metadata and directory entries are not
+  slide content. Rewritten XML can still render identically; report that
+  distinction instead of calling every package difference a visual defect.
+- Verify the requested note or content change in the exported file too.
+
+This check adapts [PPT Master's native editing approach](https://github.com/hugohe3/ppt-master/blob/8070d3df1f6f54b5fb60a9ae66e79c664f050212/skills/ppt-master/workflows/edit-native-pptx.md).
+In the [2026-10-14 probe](docs/benchmarks/ppt-master-preservation-20261014.json),
+both editors left all nine rendered slides unchanged after one speaker-note edit.
+PPT Master also retained the original slide, master, and layout XML; the existing
+editor rewrote those parts. The input contained eight image slides and one native
+table slide, so this does not establish fidelity for complex charts, animations,
+or multiple masters. It supports adopting the check, not replacing the editor or
+installing another global workflow.
 
 ## Technical details
 
